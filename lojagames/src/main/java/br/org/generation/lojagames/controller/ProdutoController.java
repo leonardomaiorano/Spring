@@ -24,39 +24,39 @@ import br.org.generation.lojagames.repository.ProdutoRepository;
 public class ProdutoController {
 	
 	@Autowired
-	private ProdutoRepository repository;
+	private ProdutoRepository produtoRepository;
 	
-	@GetMapping
+	@GetMapping("/listar")
 	public ResponseEntity<List<Produto>> getAll(){
-		return ResponseEntity.ok(repository.findAll());
+		return ResponseEntity.ok(produtoRepository.findAll());
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Produto> getById(@PathVariable long id){
-		return repository.findById(id).map(resposta -> ResponseEntity.ok(resposta))
+		return produtoRepository.findById(id).map(resposta -> ResponseEntity.ok(resposta))
 				.orElse(ResponseEntity.notFound().build());
 	}
 	
 	@GetMapping("/nome/{nome}")
-	public ResponseEntity<List<Produto>> getByName(@PathVariable String nome){
-		return ResponseEntity.ok(repository.findAllByNomeContainingIgnoreCase(nome));
+	public ResponseEntity<List<Produto>> getByName(@PathVariable String titulo){
+		return ResponseEntity.ok(produtoRepository.findAllByTituloContainingIgnoreCase(titulo));
 	}
 	
 	@PostMapping
 	public ResponseEntity<Produto> post (@RequestBody Produto produto){
-		return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(produto));
+		return ResponseEntity.status(HttpStatus.CREATED).body(produtoRepository.save(produto));
 	}
 	
 	@PutMapping
 	public ResponseEntity<Produto> put (@RequestBody Produto produto){
-		return ResponseEntity.ok(repository.save(produto));
+		return ResponseEntity.ok(produtoRepository.save(produto));
 	}
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable long id){
-		return repository.findById(id)
+		return produtoRepository.findById(id)
 				.map(resposta -> {
-					repository.deleteById(id);
+					produtoRepository.deleteById(id);
 					return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 				})
 				.orElse(ResponseEntity.notFound().build());
