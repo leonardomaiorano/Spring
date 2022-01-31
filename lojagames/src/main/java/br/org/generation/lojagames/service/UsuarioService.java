@@ -1,6 +1,8 @@
 package br.org.generation.lojagames.service;
 
 import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Optional;
 
 import org.apache.commons.codec.binary.Base64;
@@ -21,15 +23,22 @@ public class UsuarioService {
 	private UsuarioRepository usuarioRepository;
 	
 	public Optional<Usuario> cadastrarUsuario(Usuario usuario) {
+		
 		if (usuarioRepository.findByUsuario(usuario.getUsuario()).isPresent())
-			return Optional.empty();
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST,  "O usuário já existe!", null);
+		
+		if (calcularIdade(usuario.getDataNasc()) < 18)
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST,  "O usuário é menor de idade!", null);
 		
 		usuario.setSenha(criptografarSenha(usuario.getSenha()));
 
 		return Optional.of(usuarioRepository.save(usuario));
 	}
 
-	public Optional<Usuario> atualizarUsuario(Usuario usuario) {		
+	public Optional<Usuario> atualizarUsuario(Usuario usuario) {	
+		
 		if(usuarioRepository.findById(usuario.getId()).isPresent()) {
 			
 			Optional<Usuario> buscaUsuario = usuarioRepository.findByUsuario(usuario.getUsuario());
@@ -83,6 +92,12 @@ public class UsuarioService {
 		String token = usuario + ":" + senha;
 		byte[] tokenBase64 = Base64.encodeBase64(token.getBytes(Charset.forName("US-ASCII")));
 		return "Basic " + new String(tokenBase64);
+	}
+	
+	private int calcularIdade(LocalDate dataNasc) {
+		
+		return Period.between(dataNasc, LocalDate.now()).getYears();
+				
 	}
 
 }
