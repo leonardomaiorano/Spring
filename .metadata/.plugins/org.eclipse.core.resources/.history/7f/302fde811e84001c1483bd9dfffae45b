@@ -1,0 +1,5 @@
+package com.sunflower.ecommerce.model;
+
+public class UsuarioLogin {
+
+}
