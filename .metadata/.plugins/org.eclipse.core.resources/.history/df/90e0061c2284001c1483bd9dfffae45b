@@ -1,5 +1,0 @@
-package com.sunflower.ecommerce.repository;
-
-public interface UsuarioRepository {
-
-}

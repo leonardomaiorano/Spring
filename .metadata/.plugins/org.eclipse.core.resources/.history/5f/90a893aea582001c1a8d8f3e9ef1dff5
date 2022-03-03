@@ -1,5 +1,0 @@
-package br.org.generation.lojagames.repository;
-
-public interface UsuarioRepository {
-
-}
